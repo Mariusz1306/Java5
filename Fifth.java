@@ -1,54 +1,98 @@
 import java.util.Scanner;
 import java.util.Vector;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+import java.nio.file.Path;
+import java.nio.file.Files;
+import java.io.IOException;
 
 class WektoryRoznejDlugosciException extends Exception {
 
-    public WektoryRoznejDlugosciException(String message) {
+    private final String vector1;
+    private final String vector2;
+
+    public WektoryRoznejDlugosciException(String message, String FirstVector, String SecondVector) {
         super(message);
-	}
+        this.vector1 = FirstVector;
+        this.vector2 = SecondVector;
+    }
+
+    public int getVector1Length() {
+        return vector1.length();
+    }
+
+    public int getVector2Length() {
+        return vector2.length();
+    }
 }
 
 public class Fifth {
 
-	static int CheckLeadingZeros(String vector){
-		int i, LeadingZeros=0;
-		for (i = 0; i < vector.length(); i++){
-			if(vector.charAt(i)=='0')
-				LeadingZeros++;
-			else 
-				break;
-		}
-		return LeadingZeros;
-	}
+    private static Vector <Integer> AddToVector(String string, Vector<Integer> vector){
+        int i;
+        try{
+            for (i = 0; i < string.length(); i++){
+                Integer x = string.charAt(i) - '0';
+                vector.add(x);
+            }
+        } catch (IndexOutOfBoundsException e) {
+            System.err.println("Someone changed conditions on for loop!");
+        }
+        return vector;
+    }
 
-	static Vector AddToVector(Vector vector, int number){
-		while(number>0){
-			vector.add(number%10);
-			number=number/10;
-		}
-		return vector;
-	}
+    private static String ScanForVector(){
+        Scanner scan = new Scanner(System.in);
+        System.out.println("Podaj wektor jako liczbe; Podawanie wektora zakonczone jest enterem");
+        String str_vector = scan.next();
+        try {
+            if(Integer.parseInt(str_vector) < 0)
+                str_vector = str_vector.substring(1);
+        } catch (NumberFormatException e){
+            System.out.println("Podany ciąg nie jest wektorem liczbowym! Spróbuj ponownie");
+            str_vector = ScanForVector();
+        }
+        return str_vector;
+    }
 
-	public static void main(String[] args) {
-		Scanner scan = new Scanner(System.in);
-		Vector<Integer> vector1 = new Vector<>();
-		Vector<Integer> vector2 = new Vector<>();
-		System.out.println("Podaj dwa wektory jako liczby; Podawanie werktora zakonczone jest enterem");
-		String str_vector1 = scan.next();
-		String str_vector2 = scan.next();
-		int int_vector1 = Integer.parseInt(str_vector1);
-		int int_vector2 = Integer.parseInt(str_vector2);
-		
-		vector1 = AddToVector(vector1, int_vector1);
-		vector2 = AddToVector(vector2, int_vector2);
-		
-		/*Professional Debug*/
-		System.out.println(str_vector1);
-		System.out.println(str_vector2);
-		System.out.println(CheckLeadingZeros(str_vector1));
-		System.out.println(CheckLeadingZeros(str_vector2));
-		for (int i = 0; i < vector1.size(); i++)
-			System.out.println(vector1.get(i));
-		/*/Professional Debug*/
-	}
+    public static void main(String[] args) {
+        try {
+            Vector<Integer> vector1 = new Vector<>();
+            Vector<Integer> vector2 = new Vector<>();
+            Vector<Integer> SumsVector = new Vector<>();
+            String str_vector1 = ScanForVector();
+            String str_vector2 = ScanForVector();
+
+            if(str_vector1.length() != str_vector2.length())
+                throw new WektoryRoznejDlugosciException("Vectors have different sizes!", str_vector1, str_vector2);
+            vector1 = AddToVector(str_vector1, vector1);
+            vector2 = AddToVector(str_vector2, vector2);
+
+            for (int i = 0; i < vector1.size(); i++)
+                SumsVector.add(vector1.get(i) + vector2.get(i));
+
+            /*Professional Debug*/
+            for (Integer element : vector1) System.out.print(element);
+            System.out.println();
+            for (Integer element : vector2) System.out.print(element);
+            System.out.println();
+            for (int i = 0; i < SumsVector.size(); i++)
+                System.out.println("SumsVector on " + i + ": " + SumsVector.get(i));
+            /*/Professional Debug*/
+            Path file = Paths.get("Vector.txt");
+            Files.deleteIfExists(file);
+            Files.createFile(file);
+            for (Integer element : SumsVector) {
+                String x = String.valueOf(element);
+                Files.write(file, x.getBytes(), StandardOpenOption.APPEND);
+                Files.write(file, " ".getBytes(), StandardOpenOption.APPEND);
+            }
+        } catch (WektoryRoznejDlugosciException e){
+            System.err.println(e.getMessage());
+            System.err.println("Vector1: " + e.getVector1Length());
+            System.err.println("Vector2: " + e.getVector2Length());
+        } catch (IOException e){
+            System.err.println(e.getMessage());
+        }
+    }
 }
