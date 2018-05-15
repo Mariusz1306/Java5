@@ -95,3 +95,5 @@ public class Fifth {
         }
     }
 }
+
+//oddzielna klasa dla vectorow i dla plików
