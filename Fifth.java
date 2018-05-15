@@ -51,27 +51,34 @@ public class Fifth {
         return str_vector;
     }
 
-    public static void main(String[] args) {
-        try {
+    private static Vector<Integer> VectorAdding(){
+        Vector<Integer> SumsVector = new Vector<>();
+        try{
             Vector<Integer> vector1 = new Vector<>();
             Vector<Integer> vector2 = new Vector<>();
-            Vector<Integer> SumsVector = new Vector<>();
             String str_vector1 = ScanForVector();
             String str_vector2 = ScanForVector();
-
             if(str_vector1.length() != str_vector2.length())
                 throw new WektoryRoznejDlugosciException("Vectors have different sizes!", str_vector1, str_vector2);
             vector1 = AddToVector(str_vector1, vector1);
             vector2 = AddToVector(str_vector2, vector2);
-
             for (int i = 0; i < vector1.size(); i++)
                 SumsVector.add(vector1.get(i) + vector2.get(i));
+        } catch (WektoryRoznejDlugosciException e){
+            System.err.println(e.getMessage());
+            System.err.println("Vector1: " + e.getVector1Length());
+            System.err.println("Vector2: " + e.getVector2Length());
+            SumsVector = VectorAdding();
+        }
+        return SumsVector;
+    }
+
+    public static void main(String[] args) {
+        try {
+            Vector<Integer> SumsVector = new Vector<>();
+            SumsVector = VectorAdding();
 
             /*Professional Debug*/
-            for (Integer element : vector1) System.out.print(element);
-            System.out.println();
-            for (Integer element : vector2) System.out.print(element);
-            System.out.println();
             for (int i = 0; i < SumsVector.size(); i++)
                 System.out.println("SumsVector on " + i + ": " + SumsVector.get(i));
             /*/Professional Debug*/
@@ -82,11 +89,7 @@ public class Fifth {
                 String x = String.valueOf(element);
                 Files.write(file, x.getBytes(), StandardOpenOption.APPEND);
                 Files.write(file, " ".getBytes(), StandardOpenOption.APPEND);
-            }
-        } catch (WektoryRoznejDlugosciException e){
-            System.err.println(e.getMessage());
-            System.err.println("Vector1: " + e.getVector1Length());
-            System.err.println("Vector2: " + e.getVector2Length());
+            }        
         } catch (IOException e){
             System.err.println(e.getMessage());
         }
