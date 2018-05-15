@@ -17,13 +17,9 @@ class WektoryRoznejDlugosciException extends Exception {
         this.vector2 = SecondVector;
     }
 
-    public int getVector1Length() {
-        return vector1.length();
-    }
+    public int getVector1Length() { return vector1.length(); }
 
-    public int getVector2Length() {
-        return vector2.length();
-    }
+    public int getVector2Length() { return vector2.length(); }
 }
 
 public class Fifth {
@@ -43,13 +39,13 @@ public class Fifth {
 
     private static String ScanForVector(){
         Scanner scan = new Scanner(System.in);
-        System.out.println("Podaj wektor jako liczbe; Podawanie wektora zakonczone jest enterem");
+        System.out.println("Input vector as an integer; Press enter to end input");
         String str_vector = scan.next();
         try {
             if(Integer.parseInt(str_vector) < 0)
                 str_vector = str_vector.substring(1);
         } catch (NumberFormatException e){
-            System.out.println("Podany ciąg nie jest wektorem liczbowym! Spróbuj ponownie");
+            System.out.println("Input error! Please try again");
             str_vector = ScanForVector();
         }
         return str_vector;
